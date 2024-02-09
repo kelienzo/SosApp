@@ -3,7 +3,6 @@ package com.kelly.sosapp.presentation.screens
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,12 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,6 +38,18 @@ fun HomeScreen(
     }
 
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(image?.second) {
+        image?.second?.let { message ->
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short,
+                    withDismissAction = true
+                )
+            }
+        }
+    }
 
     fun String.base64ToBitmap(): Bitmap {
         val decodedString = Base64.decode(this, Base64.DEFAULT)
@@ -66,14 +77,6 @@ fun HomeScreen(
                         contentDescription = "Image Taken",
                         modifier = Modifier.weight(1f)
                     )
-                }
-                it.second?.let { message ->
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = message,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
                 }
             }
 
